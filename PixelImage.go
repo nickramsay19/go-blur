@@ -76,11 +76,11 @@ func (pi PixelImage) ReadFromFile() (newPixelImage PixelImage) {
 func (pi PixelImage) WriteToFile() {
 
 	// create new blank image
-	img := image.NewRGBA(image.Rect(0, 0, 225, 225))
+	img := image.NewRGBA(image.Rect(0, 0, pi.width, pi.height))
 
 	// set each pixel from the pixels array
-	for x := 0; x < 225; x++ {
-		for y := 0; y < 225; y++ {
+	for x := 0; x < pi.width; x++ {
+		for y := 0; y < pi.height; y++ {
 			img.Set(x, y, pi.pixels[x][y])
 		}
 	}

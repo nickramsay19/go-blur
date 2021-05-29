@@ -6,5 +6,5 @@
 - [ ] Allow command line inputs
 - [ ] Use concurrency
 - [ ] Implement my own color blending algorithm
-- [ ] Refactor w/ PixelImage struct
+- [x] Refactor w/ PixelImage struct
 - [ ] GetPixelInRadius as a for loop -1 - +1

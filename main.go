@@ -141,31 +141,17 @@ func BlurPixel(pixels [][]color.RGBA64, x, y int, blurFactor float64, blurRadius
 func main() {
 	fmt.Println("Blurring image.")
 
+	// declare blur parameters
 	var blurFactor float64 = 0.01
-	var blurRadius int = 2
+	var blurRadius int = 3
 
-	// open the image
-	pixelImage := NewPixelImage("img.jpg", 225, 225)
-	fmt.Printf("after created: %d\n", len(pixelImage.pixels))
+	// create and open the input image
+	pixelImage := NewPixelImage("img2.jpg", 810, 577)
 	pixelImage = pixelImage.ReadFromFile()
-	fmt.Printf("after read: %d\n", len(pixelImage.pixels))
 
-	// copy pi.pixels into pixels arr for now
-	/*var pixels [225][225]color.RGBA64;
-	for x := 0; x < 225; x++ {
-		for y := 0; y < 225; y++ {
-
-			// find the color at x,y and assign to pixels at x,y
-			pixels[x][y] = pixelImage.pixels[x][y]
-		}
-	}*/
-
-	// make a copy of pixels for blurring
-	//var blurredPixels [225][225]color.RGBA64
+	// create the result image from the blurred input image
 	blurredPixelImage := pixelImage.Blurred("result.jpg", blurFactor, blurRadius)
-	//NewPixelImage("result.jpg", 225, 225)
 
-	// loop through and blur each x and y pixel of the image
-	
+	// write the blurred image to a jpeg
 	blurredPixelImage.WriteToFile()
 }
