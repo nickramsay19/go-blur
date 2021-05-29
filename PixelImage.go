@@ -14,6 +14,7 @@ import (
 type PixelImage struct {
 	imageFileName string
 	pixels [][]color.RGBA64
+	width, height int
 }
 
 func NewPixelImage(imageFileName string, width, height int) (newPixelImage PixelImage) {
@@ -27,7 +28,7 @@ func NewPixelImage(imageFileName string, width, height int) (newPixelImage Pixel
 	}
 
 	// create a blank PixelImage
-	newPixelImage = PixelImage{imageFileName, pixels}
+	newPixelImage = PixelImage{imageFileName, pixels, width, height}
 
 	// return produced pixelImage
 	return
@@ -39,8 +40,6 @@ func (pi PixelImage) ReadFromFile() (newPixelImage PixelImage) {
 	imgFile, _ := os.Open(pi.imageFileName)
 	defer imgFile.Close()
 	img, _, _ := image.Decode(imgFile)
-
-	fmt.Println(img.Bounds().Dx())
 
 	// copy image into pixel array
 	pi.pixels = make([][]color.RGBA64, img.Bounds().Dx())
@@ -69,7 +68,7 @@ func (pi PixelImage) ReadFromFile() (newPixelImage PixelImage) {
 	}
 	fmt.Printf("*during reading: %d\n", len(pi.pixels))
 
-	newPixelImage = PixelImage {pi.imageFileName, pi.pixels}
+	newPixelImage = PixelImage {pi.imageFileName, pi.pixels, img.Bounds().Dx(),  img.Bounds().Dy()}
 	fmt.Printf("**during reading: %d\n", len(newPixelImage.pixels))
 	return
 }
@@ -90,4 +89,21 @@ func (pi PixelImage) WriteToFile() {
 	imgFile, _ := os.Create(pi.imageFileName)
 	defer imgFile.Close()
 	jpeg.Encode(imgFile, img, &jpeg.Options{jpeg.DefaultQuality})
+}
+
+func (pi PixelImage) Blurred(newImageFileName string, blurFactor float64, blurRadius int) (blurredPixelImage PixelImage) {
+	blurredPixelImage = NewPixelImage(newImageFileName, pi.width, pi.height)
+	
+	for x := 0; x < pi.width; x++ {
+		for y := 0; y < pi.height; y++ {
+			
+			// now set blurredPixels at x,y to the blurred pixel
+			
+			//go func() {
+			blurredPixelImage.pixels[x][y] = BlurPixel(pi.pixels, x, y, blurFactor, blurRadius)
+			//}()
+		}
+	}
+
+	return
 }

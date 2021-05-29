@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	//"os"
-	"sync"
+	//"sync"
 	"image"
 	//"image/draw"
 	"image/color"
@@ -51,22 +51,22 @@ func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
 		adjacentPixels = append(adjacentPixels, pixels[x - 1][y - 1])
 		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x - 1, y - 1, r - 1)...)
 	} 
-	if x > 0 && y < height {
+	if x > 0 && y < height - 1 {
 		// there are pixels below x,y
 		adjacentPixels = append(adjacentPixels, pixels[x - 1][y + 1])
 		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x - 1, y + 1, r - 1)...)
 	} 
-	if x < width {
+	if x < width - 1 {
 		// there are pixels right of x,y
 		adjacentPixels = append(adjacentPixels, pixels[x + 1][y])
 		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + 1, y, r - 1)...)
 	} 
-	if x < width && y > 0 {
+	if x < width - 1 && y > 0 {
 		// there are pixels above x,y
 		adjacentPixels = append(adjacentPixels, pixels[x + 1][y - 1])
 		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + 1, y - 1, r - 1)...)
 	} 
-	if x < width && y < height {
+	if x < width - 1 && y < height - 1 {
 		// there are pixels below x,y
 		adjacentPixels = append(adjacentPixels, pixels[x + 1][y + 1])
 		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + 1, y + 1, r - 1)...)
@@ -76,7 +76,7 @@ func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
 		adjacentPixels = append(adjacentPixels, pixels[x][y - 1])
 		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x, y - 1, r - 1)...)
 	} 
-	if y < height {
+	if y < height - 1 {
 		// there is a pixel below x,y
 		adjacentPixels = append(adjacentPixels, pixels[x][y + 1])
 		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x, y + 1, r - 1)...)
@@ -141,8 +141,8 @@ func BlurPixel(pixels [][]color.RGBA64, x, y int, blurFactor float64, blurRadius
 func main() {
 	fmt.Println("Blurring image.")
 
-	var blurFactor float64 = 0.9
-	var blurRadius int = 1
+	var blurFactor float64 = 0.01
+	var blurRadius int = 2
 
 	// open the image
 	pixelImage := NewPixelImage("img.jpg", 225, 225)
@@ -162,28 +162,10 @@ func main() {
 
 	// make a copy of pixels for blurring
 	//var blurredPixels [225][225]color.RGBA64
-	blurredPixelImage := NewPixelImage("result.jpg", 225, 225)
+	blurredPixelImage := pixelImage.Blurred("result.jpg", blurFactor, blurRadius)
+	//NewPixelImage("result.jpg", 225, 225)
 
 	// loop through and blur each x and y pixel of the image
-	var wg sync.WaitGroup
-	for x := 0; x < 224; x++ {
-		for y := 0; y < 224; y++ {
-			
-			wg.Add(1)
-
-			// now set blurredPixels at x,y to the blurred pixel
-			
-			//go func() {
-			blurredPixelImage.pixels[x][y] = BlurPixel(pixelImage.pixels, x, y, blurFactor, blurRadius)
-			wg.Done()
-			//}()
-		}
-	}
-
-	wg.Wait()
-
-
-
+	
 	blurredPixelImage.WriteToFile()
-
 }
