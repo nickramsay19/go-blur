@@ -1,14 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	//"sync"
 	"image"
-	//"image/draw"
 	"image/color"
 	"image/jpeg"
-	//"github.com/lucasb-eyer/go-colorful"
 )
 
 type PixelImage struct {
@@ -43,7 +39,6 @@ func (pi PixelImage) ReadFromFile() (newPixelImage PixelImage) {
 
 	// copy image into pixel array
 	pi.pixels = make([][]color.RGBA64, img.Bounds().Dx())
-	fmt.Printf("during reading: %d\n", len(pi.pixels))
 
 	// loop through all x and y positions of the image
 	for x := 0; x < img.Bounds().Dx(); x++ {
@@ -66,10 +61,8 @@ func (pi PixelImage) ReadFromFile() (newPixelImage PixelImage) {
 			pi.pixels[x][y] = GetRGBA64At(img, x, y)
 		}
 	}
-	fmt.Printf("*during reading: %d\n", len(pi.pixels))
 
 	newPixelImage = PixelImage {pi.imageFileName, pi.pixels, img.Bounds().Dx(),  img.Bounds().Dy()}
-	fmt.Printf("**during reading: %d\n", len(newPixelImage.pixels))
 	return
 }
 

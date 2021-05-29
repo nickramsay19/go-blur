@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
-	//"os"
-	//"sync"
+	"os"
+	"strconv"
 	"image"
-	//"image/draw"
 	"image/color"
-	//"image/jpeg"
 	"github.com/lucasb-eyer/go-colorful"
 )
 
@@ -134,24 +132,47 @@ func BlurPixel(pixels [][]color.RGBA64, x, y int, blurFactor float64, blurRadius
 	}
 
 	// finally return the blurred pixel
-	fmt.Printf("Blurred (%d, %d)\n", x, y)
+	//fmt.Printf("Blurred (%d, %d)\n", x, y)
 	return blurredPixel
 }
 
 func main() {
+
+	// Get command line arguments
+	args := os.Args[1:]
+
+	// check for sufficient arguments have been provided
+	if len(args) < 4 {
+		fmt.Println("Error: Insufficient parameters provided.\nUsage: blur <input> <output> <blur factor> <blur radius>\n")
+		return
+	}
+
+	// initialise parameters from args
+	var inputImageFileName string = args[0]
+	var outputImageFileName string = args[1]
+	blurFactor, err := strconv.ParseFloat(args[2], 64)
+	if err != nil {
+		fmt.Println("Error: Improper value for blur factor provided.\nPlease provide a floating point number.\nExample: 0.4\n")
+		return
+	}
+	blurRadius, err := strconv.Atoi(args[3])
+	if err != nil {
+		fmt.Println("Error: Improper value for blur radius provided.\nPlease provide an integer.\nExample: 2\n")
+		return
+	}
+
 	fmt.Println("Blurring image.")
 
-	// declare blur parameters
-	var blurFactor float64 = 0.01
-	var blurRadius int = 3
-
 	// create and open the input image
-	pixelImage := NewPixelImage("img2.jpg", 810, 577)
+	pixelImage := NewPixelImage(inputImageFileName, 810, 577)
 	pixelImage = pixelImage.ReadFromFile()
 
 	// create the result image from the blurred input image
-	blurredPixelImage := pixelImage.Blurred("result.jpg", blurFactor, blurRadius)
+	blurredPixelImage := pixelImage.Blurred(outputImageFileName, blurFactor, blurRadius)
 
 	// write the blurred image to a jpeg
 	blurredPixelImage.WriteToFile()
+
+	// print a success message
+	fmt.Println("Job finished successfully.")
 }
