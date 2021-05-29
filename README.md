@@ -10,7 +10,7 @@ go build main.go PixelImage.go
 
 # run on your image
 # ./main <input> <output> <blur factor> <blur radius>
-./main myInputImage myOutputImage 0.1 2
+./main myInputImage.jpg myOutputImage.jpg 0.1 2
 ```
 
 ## Roadmap
