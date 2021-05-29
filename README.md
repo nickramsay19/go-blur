@@ -1,4 +1,17 @@
 # go-blur
+> Created by Nicholas Ramsay
+
+go-blur is a command line utility for blurring JPEG images. 
+
+## Usage
+```
+# build
+go build main.go PixelImage.go
+
+# run on your image
+# ./main <input> <output> <blur factor> <blur radius>
+./main myInputImage myOutputImage 0.1 2
+```
 
 ## Roadmap
 - [x] Refactor and clean the code
