@@ -34,6 +34,7 @@ func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
 	var adjacentPixels []color.RGBA64
 	width, height := len(pixels), len(pixels[0])
 
+	// check for recursive base case: repeats = 0
 	if r == 0 {
 		return adjacentPixels
 	}
