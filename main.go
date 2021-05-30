@@ -147,10 +147,10 @@ func main() {
 	var blurFactor float64
 	var blurRadius int
 
-	// check for sufficient arguments have been provided
+	// check that sufficient arguments have been provided
 	// initialise parameters from args
 	if len(args) < 2 {
-		fmt.Println("Error: Insufficient parameters provided.\nUsage: blur <input> <output> <blur factor> <blur radius>\n")
+		fmt.Println("Error: Insufficient parameters provided.\nUsage: blur <input> <output> # use default blur parameters\nUsage: blur <input> <output> <blur factor> <blur radius> # use specified blur parameters")
 		return
 	} else if len(args) < 4 {
 		inputImageFileName = args[0]
@@ -160,19 +160,25 @@ func main() {
 	} else {
 		inputImageFileName = args[0]
 		outputImageFileName = args[1]
-		blurFactor, err = strconv.ParseFloat(args[2], 64)
-		if err != nil {
+
+		// convert 3rd param to float
+		// assign blurFactor to float if successful
+		if blurFactorFloat, err := strconv.ParseFloat(args[2], 64); err == nil {
+			blurFactor = blurFactorFloat
+		} else {
 			fmt.Println("Error: Improper value for blur factor provided.\nPlease provide a floating point number.\nExample: 0.4\n")
 			return
 		}
-		blurRadius, err := strconv.Atoi(args[3])
-		if err != nil {
+
+		// convert 4th param to int
+		// assing to blurRadius if successful
+		if blurRadiusFloat, err := strconv.Atoi(args[3]); err == nil {
+			blurRadius = blurRadiusFloat
+		} else {
 			fmt.Println("Error: Improper value for blur radius provided.\nPlease provide an integer.\nExample: 2\n")
 			return
 		}
 	}
-
-	
 
 	fmt.Println("Blurring image.")
 
