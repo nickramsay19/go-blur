@@ -150,11 +150,15 @@ func main() {
 	// check that sufficient arguments have been provided
 	// initialise parameters from args
 	if len(args) < 2 {
+
+		// insufficient args provided, show an error and usage guide.
 		fmt.Println("Error: Insufficient parameters provided.\nUsage: blur <input> <output> # use default blur parameters\nUsage: blur <input> <output> <blur factor> <blur radius> # use specified blur parameters")
 		return
 	} else if len(args) < 4 {
 		inputImageFileName = args[0]
 		outputImageFileName = args[1]
+
+		// give default values for blurFactor and blurRadius
 		blurFactor = 0.1
 		blurRadius = 2
 	} else {

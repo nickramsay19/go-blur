@@ -21,3 +21,4 @@ go build main.go PixelImage.go
 - [ ] Implement my own color blending algorithm
 - [x] Refactor w/ PixelImage struct
 - [ ] GetPixelInRadius as a for loop -1 - +1
+- [ ] Check for valid filenames as given from args
