@@ -38,46 +38,24 @@ func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
 		return adjacentPixels
 	}
 
-	// find all adjacent pixels and append to slice
-	if x > 0 {
-		// there are pixels left of x,y
-		adjacentPixels = append(adjacentPixels, pixels[x - 1][y])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x - 1, y, r - 1)...)
-	} 
-	if x > 0 && y > 0 {
-		// there are pixels above x,y
-		adjacentPixels = append(adjacentPixels, pixels[x - 1][y - 1])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x - 1, y - 1, r - 1)...)
-	} 
-	if x > 0 && y < height - 1 {
-		// there are pixels below x,y
-		adjacentPixels = append(adjacentPixels, pixels[x - 1][y + 1])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x - 1, y + 1, r - 1)...)
-	} 
-	if x < width - 1 {
-		// there are pixels right of x,y
-		adjacentPixels = append(adjacentPixels, pixels[x + 1][y])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + 1, y, r - 1)...)
-	} 
-	if x < width - 1 && y > 0 {
-		// there are pixels above x,y
-		adjacentPixels = append(adjacentPixels, pixels[x + 1][y - 1])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + 1, y - 1, r - 1)...)
-	} 
-	if x < width - 1 && y < height - 1 {
-		// there are pixels below x,y
-		adjacentPixels = append(adjacentPixels, pixels[x + 1][y + 1])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + 1, y + 1, r - 1)...)
-	} 
-	if y > 0 {
-		// there is a pixel above x,y
-		adjacentPixels = append(adjacentPixels, pixels[x][y - 1])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x, y - 1, r - 1)...)
-	} 
-	if y < height - 1 {
-		// there is a pixel below x,y
-		adjacentPixels = append(adjacentPixels, pixels[x][y + 1])
-		adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x, y + 1, r - 1)...)
+	// loop through all adjacent x, y values dx,dy within 1 pixel of x,y
+	for dx := -1; dx < 1; dx++ {
+		for dy := -1; dy < 1; dy++ {
+
+			// avoid adding the centre pixel at x,y
+			if dx != x && dy != y {
+
+				// check that dx and dy make x,y are contained within the bounds of the slice
+				if x + dx > 0 && x + dx < width - 1 && y + dy > 0 && y + dy < height - 1 {
+
+					// append the adjacent pixel
+					adjacentPixels = append(adjacentPixels, pixels[x + dx][y + dy])
+
+					// append further adjacent pixels recursively
+					adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + dx, y + dy, r - 1)...)
+				}
+			}
+		}
 	}
 
 	// remove duplicates
@@ -86,7 +64,10 @@ func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
 	// so we wont for now
 	// we could remove all adjacent pixels found in this running from the ones found in the recursively ran
 
+
 	return adjacentPixels
+
+
 }
 
 func BlurPixel(pixels [][]color.RGBA64, x, y int, blurFactor float64, blurRadius int) color.RGBA64 {
