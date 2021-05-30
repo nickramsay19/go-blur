@@ -9,6 +9,10 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 )
 
+type Pixel struct {
+	X, Y int
+}
+
 func GetRGBA64At(img image.Image, x, y int) color.RGBA64 {
 
 	// declare the output rgba64
@@ -28,7 +32,7 @@ func GetRGBA64At(img image.Image, x, y int) color.RGBA64 {
 	return rgba64
 }
 
-func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
+func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, dx, dy, r int) []color.RGBA64 {
 
 	// create slice of adjacent pixels
 	var adjacentPixels []color.RGBA64
@@ -39,21 +43,28 @@ func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
 		return adjacentPixels
 	}
 
-	// loop through all adjacent x, y values dx,dy within 1 pixel of x,y
-	for dx := -1; dx < 1; dx++ {
-		for dy := -1; dy < 1; dy++ {
+	// loop through all adjacent x + dx, y + dy values rdx,rdy within 1 pixel of x + dx,y + dy
+	for rdx := -1; rdx < 1; rdx++ {
+		for rdy := -1; rdy < 1; rdy++ {
 
-			// avoid adding the centre pixel at x,y
-			if dx != x && dy != y {
+			// create some 2d Pixel values to help track & describe the following operations
+			callingPixel := Pixel {x, y}
+			originPixel := Pixel {x + dx, y + dy}
+			originPixelAdjacent := Pixel {x + dx + rdx, y + dy + rdy}
 
-				// check that dx and dy make x,y are contained within the bounds of the slice
-				if x + dx > 0 && x + dx < width - 1 && y + dy > 0 && y + dy < height - 1 {
+			// avoid adding this pixel (at x + dx, y + dy) 
+			// avoid adding the calling pixel (at x, y)
+			// avoid adding pixels adjacent to the calling pixel
+			if (originPixelAdjacent.X != originPixel.X && originPixelAdjacent.Y != originPixel.Y) && (originPixelAdjacent.X != callingPixel.X && originPixelAdjacent.Y != callingPixel.Y) {
+
+				// check that rdx and rdy make x,y are contained within the bounds of the slice
+				if originPixelAdjacent.X > 0 && originPixelAdjacent.X < width - 1 && originPixelAdjacent.Y > 0 && originPixelAdjacent.Y < height - 1 {
 
 					// append the adjacent pixel
-					adjacentPixels = append(adjacentPixels, pixels[x + dx][y + dy])
+					adjacentPixels = append(adjacentPixels, pixels[originPixelAdjacent.X][originPixelAdjacent.Y])
 
 					// append further adjacent pixels recursively
-					adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, x + dx, y + dy, r - 1)...)
+					adjacentPixels = append(adjacentPixels, GetPixelsInRadius(pixels, originPixel.X, originPixel.Y, rdx, rdy, r - 1)...)
 				}
 			}
 		}
@@ -84,7 +95,7 @@ func BlurPixel(pixels [][]color.RGBA64, x, y int, blurFactor float64, blurRadius
 	}
 
 	// create slice of adjacent pixels
-	var adjacentPixels []color.RGBA64 = GetPixelsInRadius(pixels, x, y, blurRadius)
+	var adjacentPixels []color.RGBA64 = GetPixelsInRadius(pixels, x, y, 0, 0, blurRadius)
 	
 	// loop through each discovered adjacent pixel
 	// and mix the original pixel with the adjacent pixel
@@ -166,7 +177,7 @@ func main() {
 		if blurRadiusFloat, err := strconv.Atoi(args[3]); err == nil {
 
 			// check for a valid integer value between 0 and 10
-			if blurRadiusFloat >= 0 && <= 10 {
+			if blurRadiusFloat >= 0 && blurRadiusFloat <= 10 {
 				blurRadius = blurRadiusFloat
 			} else {
 				fmt.Println("Error: Improper value for blur radius provided.\nPlease provide an integer between 0 and 10.\nExample: 2\n")
