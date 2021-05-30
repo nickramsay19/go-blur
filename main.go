@@ -67,8 +67,6 @@ func GetPixelsInRadius(pixels [][]color.RGBA64, x, y, r int) []color.RGBA64 {
 
 
 	return adjacentPixels
-
-
 }
 
 func BlurPixel(pixels [][]color.RGBA64, x, y int, blurFactor float64, blurRadius int) color.RGBA64 {
@@ -150,7 +148,14 @@ func main() {
 		// convert 3rd param to float
 		// assign blurFactor to float if successful
 		if blurFactorFloat, err := strconv.ParseFloat(args[2], 64); err == nil {
-			blurFactor = blurFactorFloat
+
+			// check for a valid float value between 0 and 1
+			if blurFactorFloat >= 0.0 && blurFactorFloat <= 1 {
+				blurFactor = blurFactorFloat
+			} else {
+				fmt.Println("Error: Improper value for blur factor provided.\nPlease provide a floating point number between 0 and 1.\nExample: 0.4\n")
+			}
+			
 		} else {
 			fmt.Println("Error: Improper value for blur factor provided.\nPlease provide a floating point number.\nExample: 0.4\n")
 			return
@@ -159,7 +164,14 @@ func main() {
 		// convert 4th param to int
 		// assing to blurRadius if successful
 		if blurRadiusFloat, err := strconv.Atoi(args[3]); err == nil {
-			blurRadius = blurRadiusFloat
+
+			// check for a valid integer value between 0 and 10
+			if blurRadiusFloat >= 0 && <= 10 {
+				blurRadius = blurRadiusFloat
+			} else {
+				fmt.Println("Error: Improper value for blur radius provided.\nPlease provide an integer between 0 and 10.\nExample: 2\n")
+			}
+			
 		} else {
 			fmt.Println("Error: Improper value for blur radius provided.\nPlease provide an integer.\nExample: 2\n")
 			return
