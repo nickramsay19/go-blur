@@ -13,6 +13,10 @@ go build main.go PixelImage.go
 ./main myInputImage.jpg myOutputImage.jpg 0.1 2
 ```
 
+The blur radius specifies the radius in which each pixel will be blended with. The lower the value the faster the program runs. I recommend a value of 2 or 3.
+
+The blur factor specifies the amount that a pixel will be blended with surrounding pixels, the value describes the amount of the original color will remain. I recommend a value of 0.1.
+
 ## Roadmap
 - [x] Refactor and clean the code
 - [x] Radii blurring
@@ -20,5 +24,5 @@ go build main.go PixelImage.go
 - [ ] Use concurrency
 - [ ] Implement my own color blending algorithm
 - [x] Refactor w/ PixelImage struct
-- [ ] GetPixelInRadius as a for loop -1 - +1
+- [x] GetPixelInRadius as a for loop -1 - +1
 - [ ] Check for valid filenames as given from args
